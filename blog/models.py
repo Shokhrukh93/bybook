@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class PublishedManager(models.Manager):
@@ -20,7 +21,7 @@ class Post(models.Model):
                                on_delete=models.CASCADE,
                                related_name='blog_post')
     body = models.TextField()
-    image = models.ImageField(upload_to='blog/media/images/', blank=True)
+    image = models.ImageField(upload_to='images/blog/', blank=True)
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -35,3 +36,10 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('blog:post_detail',
+                       args=[self.publish.year,
+                             self.publish.month,
+                             self.publish.day,
+                             self.slug])
